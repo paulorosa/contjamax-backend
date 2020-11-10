@@ -6,14 +6,16 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import br.com.contjamax.company.domain.Company;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class CompanyService {
     private static List<Company> companies = new ArrayList<>();
 
     static {
-        for (int i=1; i<5; i++) {
-            companies.add(Company.builder().nickname("A"+i).name("E"+i).build());
+        for (int i=0; i<5; i++) {
+            companies.add(Company.builder().id(i).nickname("A"+i).name("E"+i).build());
         }
     }
 
@@ -21,6 +23,17 @@ public class CompanyService {
         return companies;
     }
 
+    public Company save (Company company) {
+        if (company.getId() == -1) {
+            log.info("Creating a new company");
+            company.setId(companies.size());
+            companies.add(company);
+        } else {
+            log.info("Updating a new company");
+            companies.add((int)company.getId(), company);
+        }
+        return company;
+    }
     public Company delete(long id) {
         Company company = find(id);
         if (company == null) return null;
